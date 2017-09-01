@@ -1,12 +1,15 @@
 package org.baeldung.spring;
 
-import org.baeldung.security.google2fa.CustomAuthenticationProvider;
-import org.baeldung.security.google2fa.CustomWebAuthenticationDetailsSource;
+import com.ustn.userprofile.security.PasswordEncodingMigrationEncoder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationTrustResolver;
+import org.springframework.security.authentication.AuthenticationTrustResolverImpl;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.authentication.dao.ReflectionSaltSource;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
@@ -39,8 +42,13 @@ public class SecSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private AuthenticationFailureHandler authenticationFailureHandler;
 
-    @Autowired
+    /*@Autowired
     private CustomWebAuthenticationDetailsSource authenticationDetailsSource;
+*/
+    @Autowired
+    @Qualifier("customUserDetailsService")
+    private
+    UserDetailsService customUserDetailsService;
 
     public SecSecurityConfig() {
         super();
@@ -48,7 +56,10 @@ public class SecSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(final AuthenticationManagerBuilder auth) throws Exception {
-        auth.authenticationProvider(authProvider());
+        /*auth.inMemoryAuthentication().withUser("ks_soft")
+                .password("t3st").roles("USER");*/
+        auth.authenticationProvider(authenticationProvider());
+        //auth.authenticationProvider(authProvider());
     }
 
     @Override
@@ -77,7 +88,7 @@ public class SecSecurityConfig extends WebSecurityConfigurerAdapter {
                 .failureUrl("/login?error=true")
                 .successHandler(myAuthenticationSuccessHandler)
                 .failureHandler(authenticationFailureHandler)
-                .authenticationDetailsSource(authenticationDetailsSource)
+                //.authenticationDetailsSource(authenticationDetailsSource)
             .permitAll()
                 .and()
             .sessionManagement()
@@ -96,17 +107,33 @@ public class SecSecurityConfig extends WebSecurityConfigurerAdapter {
 
     // beans
 
-    @Bean
-    public DaoAuthenticationProvider authProvider() {
-        final CustomAuthenticationProvider authProvider = new CustomAuthenticationProvider();
-        authProvider.setUserDetailsService(userDetailsService);
-        authProvider.setPasswordEncoder(encoder());
-        return authProvider;
+    @Bean("passwordEncoder")
+    public org.springframework.security.authentication.encoding.PasswordEncoder passwordEncoder() {
+        return new PasswordEncodingMigrationEncoder();
+    }
+
+    @Bean("bcrypt")
+    public PasswordEncoder encoder() {
+        return new BCryptPasswordEncoder(11);
     }
 
     @Bean
-    public PasswordEncoder encoder() {
-        return new BCryptPasswordEncoder(11);
+    public DaoAuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
+        authenticationProvider.setUserDetailsService(customUserDetailsService);
+        authenticationProvider.setPasswordEncoder(passwordEncoder());
+
+        ReflectionSaltSource reflectionSaltSource = new ReflectionSaltSource();
+        reflectionSaltSource.setUserPropertyToUse("salt");
+
+        authenticationProvider.setSaltSource(reflectionSaltSource);
+        return authenticationProvider;
+    }
+
+
+    @Bean
+    public AuthenticationTrustResolver authenticationTrustResolver() {
+        return new AuthenticationTrustResolverImpl();
     }
 
     @Bean

@@ -138,6 +138,18 @@
 			<optional>true</optional>
 		</dependency>
 
+		<dependency>
+			<groupId>com.ustn.userprofile</groupId>
+			<artifactId>client-userprofile</artifactId>
+			<version>${userprofile.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-starter</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
 	</dependencies>
 
 	<build>
@@ -228,6 +240,7 @@
 
 		<passay.version>1.0</passay.version>
 		<rest-assured.version>2.4.0</rest-assured.version>
+		<userprofile.version>2.0.3-SNAPSHOT</userprofile.version>
 
 	</properties>
 

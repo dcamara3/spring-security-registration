@@ -37,14 +37,6 @@
       <div th:if="${! #authentication.principal.using2FA}">
         You are not using Two-step authentication <a href="#" class="btn btn-primary" onclick="enable2FA()">Enable 2FA</a> 
       </div>
-      
-      <br/>
-      <div id="qr" style="display:none;">
-          <p>Scan this Barcode using Google Authenticator app on your phone 
-                 <a href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2">Android</a> and 
-                 <a href="https://itunes.apple.com/us/app/google-authenticator/id388497605">iPhone</a>
-          </p>
-      </div>
   </div>
   
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
