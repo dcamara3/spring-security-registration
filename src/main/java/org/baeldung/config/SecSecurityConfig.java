@@ -1,4 +1,4 @@
-package org.baeldung.spring;
+package org.baeldung.config;
 
 import com.ustn.userprofile.security.PasswordEncodingMigrationEncoder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,11 +42,7 @@ public class SecSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private AuthenticationFailureHandler authenticationFailureHandler;
 
-    /*@Autowired
-    private CustomWebAuthenticationDetailsSource authenticationDetailsSource;
-*/
     @Autowired
-    @Qualifier("customUserDetailsService")
     private
     UserDetailsService customUserDetailsService;
 
@@ -130,15 +126,8 @@ public class SecSecurityConfig extends WebSecurityConfigurerAdapter {
         return authenticationProvider;
     }
 
-
-    @Bean
-    public AuthenticationTrustResolver authenticationTrustResolver() {
-        return new AuthenticationTrustResolverImpl();
-    }
-
     @Bean
     public SessionRegistry sessionRegistry() {
         return new SessionRegistryImpl();
     }
-
 }

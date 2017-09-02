@@ -36,6 +36,6 @@
 	<authentication-manager>
 		<authentication-provider user-service-ref="userDetailsService" />
 	</authentication-manager>
-	<beans:bean id="userDetailsService" class="org.baeldung.security.MyUserDetailsService" />
+	<beans:bean id="userDetailsService" class="org.baeldung.service.MyUserDetailsService" />
 
 </beans:beans>

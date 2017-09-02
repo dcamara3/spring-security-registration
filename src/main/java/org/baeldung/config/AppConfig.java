@@ -1,5 +1,6 @@
-package org.baeldung.spring;
+package org.baeldung.config;
 
+import com.ustn.userprofile.manager.UserManager;
 import org.baeldung.security.ActiveUserStore;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,6 +14,11 @@ public class AppConfig {
     @Bean
     public ActiveUserStore activeUserStore() {
         return new ActiveUserStore();
+    }
+
+    @Bean
+    public UserManager userManager () {
+        return new UserManager();
     }
 
     /*@Bean

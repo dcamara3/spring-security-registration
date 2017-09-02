@@ -1,4 +1,4 @@
-package org.baeldung.security;
+package org.baeldung.service;
 
 public interface ISecurityUserService {
 

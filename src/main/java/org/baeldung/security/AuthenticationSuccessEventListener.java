@@ -2,6 +2,7 @@ package org.baeldung.security;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.baeldung.service.LoginAttemptService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.security.authentication.event.AuthenticationSuccessEvent;

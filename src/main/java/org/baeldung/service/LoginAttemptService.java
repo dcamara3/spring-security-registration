@@ -1,4 +1,4 @@
-package org.baeldung.security;
+package org.baeldung.service;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;

@@ -1,4 +1,4 @@
-package org.baeldung.spring;
+package org.baeldung.config;
 
 import java.util.Locale;
 

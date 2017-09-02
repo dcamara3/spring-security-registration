@@ -12,10 +12,10 @@ import org.baeldung.web.error.UserAlreadyExistException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.authentication.encoding.PasswordEncoder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.session.SessionRegistry;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -41,7 +41,7 @@ public class UserService implements IUserService {
     private PasswordResetTokenRepository passwordTokenRepository;
 
     @Autowired
-    @Qualifier("bcrypt")
+    @Qualifier("passwordEncoder")
     private PasswordEncoder passwordEncoder;
 
     @Autowired
@@ -68,7 +68,7 @@ public class UserService implements IUserService {
 
         user.setFirstName(accountDto.getFirstName());
         user.setLastName(accountDto.getLastName());
-        user.setPassword(passwordEncoder.encode(accountDto.getPassword()));
+        user.setPassword(passwordEncoder.encodePassword(accountDto.getPassword(), accountDto.getEmail()));
         user.setEmail(accountDto.getEmail());
         user.setUsing2FA(accountDto.isUsing2FA());
         user.setRoles(Arrays.asList(roleRepository.findByName("ROLE_USER")));
@@ -153,13 +153,13 @@ public class UserService implements IUserService {
 
     @Override
     public void changeUserPassword(final User user, final String password) {
-        user.setPassword(passwordEncoder.encode(password));
+        user.setPassword(passwordEncoder.encodePassword(password, user.getEmail()));
         repository.save(user);
     }
 
     @Override
     public boolean checkIfValidOldPassword(final User user, final String oldPassword) {
-        return passwordEncoder.matches(oldPassword, user.getPassword());
+        return passwordEncoder.isPasswordValid(oldPassword, user.getPassword(), user.getEmail());
     }
 
     @Override

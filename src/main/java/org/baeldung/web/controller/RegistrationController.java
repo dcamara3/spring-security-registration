@@ -10,7 +10,7 @@ import javax.validation.Valid;
 import org.baeldung.persistence.model.User;
 import org.baeldung.persistence.model.VerificationToken;
 import org.baeldung.registration.OnRegistrationCompleteEvent;
-import org.baeldung.security.ISecurityUserService;
+import org.baeldung.service.ISecurityUserService;
 import org.baeldung.service.IUserService;
 import org.baeldung.web.dto.PasswordDto;
 import org.baeldung.web.dto.UserDto;

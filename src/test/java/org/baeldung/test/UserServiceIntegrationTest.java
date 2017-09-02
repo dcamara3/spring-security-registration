@@ -20,7 +20,7 @@ import org.baeldung.persistence.model.User;
 import org.baeldung.persistence.model.VerificationToken;
 import org.baeldung.service.IUserService;
 import org.baeldung.service.UserService;
-import org.baeldung.spring.ServiceConfig;
+import org.baeldung.config.ServiceConfig;
 import org.baeldung.spring.TestDbConfig;
 import org.baeldung.spring.TestIntegrationConfig;
 import org.baeldung.validation.EmailExistsException;
