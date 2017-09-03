@@ -1,8 +1,6 @@
 package org.baeldung.registration.listener;
 
-import java.util.UUID;
-
-import org.baeldung.persistence.model.User;
+import com.ustn.userprofile.UserAccount;
 import org.baeldung.registration.OnRegistrationCompleteEvent;
 import org.baeldung.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +10,8 @@ import org.springframework.core.env.Environment;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Component;
+
+import java.util.UUID;
 
 @Component
 public class RegistrationListener implements ApplicationListener<OnRegistrationCompleteEvent> {
@@ -35,7 +35,7 @@ public class RegistrationListener implements ApplicationListener<OnRegistrationC
     }
 
     private void confirmRegistration(final OnRegistrationCompleteEvent event) {
-        final User user = event.getUser();
+        final UserAccount user = event.getUser();
         final String token = UUID.randomUUID().toString();
         service.createVerificationTokenForUser(user, token);
 
@@ -45,7 +45,7 @@ public class RegistrationListener implements ApplicationListener<OnRegistrationC
 
     //
 
-    private final SimpleMailMessage constructEmailMessage(final OnRegistrationCompleteEvent event, final User user, final String token) {
+    private final SimpleMailMessage constructEmailMessage(final OnRegistrationCompleteEvent event, final UserAccount user, final String token) {
         final String recipientAddress = user.getEmail();
         final String subject = "Registration Confirmation";
         final String confirmationUrl = event.getAppUrl() + "/registrationConfirm.html?token=" + token;

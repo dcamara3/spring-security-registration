@@ -1,6 +1,6 @@
 package org.baeldung.validation;
 
-import org.baeldung.web.dto.UserDto;
+import com.ustn.userprofile.dto.UserMvcDto;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
@@ -9,7 +9,7 @@ public class UserValidator implements Validator {
 
     @Override
     public boolean supports(final Class<?> clazz) {
-        return UserDto.class.isAssignableFrom(clazz);
+        return UserMvcDto.class.isAssignableFrom(clazz);
     }
 
     @Override

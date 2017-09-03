@@ -4,6 +4,7 @@ import java.util.Properties;
 
 import javax.sql.DataSource;
 
+import com.radiatemedia.phoenix.util.database.DatabaseConnectionUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -37,25 +38,26 @@ public class PersistenceJPAConfig {
 
     //
 
-    @Bean
+    /*@Bean
     public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
         final LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
         em.setDataSource(dataSource());
-        em.setPackagesToScan(new String[] { "org.baeldung.persistence.model" });
+        em.setPackagesToScan(new String[] { "org.baeldung.persistence.model", "com.ustn.userprofile" });
         final HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
         em.setJpaVendorAdapter(vendorAdapter);
         em.setJpaProperties(additionalProperties());
         return em;
-    }
+    }*/
 
     @Bean
     public DataSource dataSource() {
-        final DriverManagerDataSource dataSource = new DriverManagerDataSource();
+        /*final DriverManagerDataSource dataSource = new DriverManagerDataSource();
         dataSource.setDriverClassName(env.getProperty("jdbc.driverClassName"));
         dataSource.setUrl(env.getProperty("jdbc.url"));
         dataSource.setUsername(env.getProperty("jdbc.user"));
         dataSource.setPassword(env.getProperty("jdbc.pass"));
-        return dataSource;
+        return dataSource;*/
+        return DatabaseConnectionUtil.getInstance().getDataSource("userprofile3");
     }
 
     /*public DataSource dataSource() {
@@ -63,12 +65,12 @@ public class PersistenceJPAConfig {
         return datasource;
     }*/
 
-    @Bean
+    /*@Bean
     public JpaTransactionManager transactionManager() {
         final JpaTransactionManager transactionManager = new JpaTransactionManager();
         transactionManager.setEntityManagerFactory(entityManagerFactory().getObject());
         return transactionManager;
-    }
+    }*/
 
     @Bean
     public PersistenceExceptionTranslationPostProcessor exceptionTranslation() {

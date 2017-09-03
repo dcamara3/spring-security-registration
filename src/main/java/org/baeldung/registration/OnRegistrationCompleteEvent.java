@@ -1,18 +1,18 @@
 package org.baeldung.registration;
 
-import java.util.Locale;
-
-import org.baeldung.persistence.model.User;
+import com.ustn.userprofile.UserAccount;
 import org.springframework.context.ApplicationEvent;
+
+import java.util.Locale;
 
 @SuppressWarnings("serial")
 public class OnRegistrationCompleteEvent extends ApplicationEvent {
 
     private final String appUrl;
     private final Locale locale;
-    private final User user;
+    private final UserAccount user;
 
-    public OnRegistrationCompleteEvent(final User user, final Locale locale, final String appUrl) {
+    public OnRegistrationCompleteEvent(final UserAccount user, final Locale locale, final String appUrl) {
         super(user);
         this.user = user;
         this.locale = locale;
@@ -29,7 +29,7 @@ public class OnRegistrationCompleteEvent extends ApplicationEvent {
         return locale;
     }
 
-    public User getUser() {
+    public UserAccount getUser() {
         return user;
     }
 

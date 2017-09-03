@@ -3,12 +3,13 @@ package org.baeldung.test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.ustn.userprofile.UserAccount;
+import com.ustn.userprofile.manager.UserManager;
 import org.baeldung.Application;
-import org.baeldung.persistence.dao.UserRepository;
-import org.baeldung.persistence.model.User;
 import org.baeldung.spring.TestDbConfig;
 import org.baeldung.spring.TestIntegrationConfig;
 import org.junit.Before;
@@ -31,7 +32,7 @@ import com.jayway.restassured.specification.RequestSpecification;
 public class GetLoggedUsersIntegrationTest {
 
     @Autowired
-    private UserRepository userRepository;
+    private UserManager userRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -46,18 +47,18 @@ public class GetLoggedUsersIntegrationTest {
 
     @Before
     public void init() {
-        User user = userRepository.findByEmail("test@test.com");
+        UserAccount user = userRepository.findByEmail("test@test.com");
         if (user == null) {
-            user = new User();
-            user.setFirstName("Test");
-            user.setLastName("Test");
+            user = new UserAccount();
+            user.setName("Test");
+            user.setLogin("Test");
             user.setPassword(passwordEncoder.encode("test"));
             user.setEmail("test@test.com");
-            user.setEnabled(true);
-            userRepository.save(user);
+            user.setActive(true);
+            userRepository.insertUserAccount(user, new ArrayList<>());
         } else {
             user.setPassword(passwordEncoder.encode("test"));
-            userRepository.save(user);
+            userRepository.insertUserAccount(user, new ArrayList<>());
         }
 
         RestAssured.port = port;

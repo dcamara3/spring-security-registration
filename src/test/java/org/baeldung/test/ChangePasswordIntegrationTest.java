@@ -1,17 +1,12 @@
 package org.baeldung.test;
 
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.isEmptyOrNullString;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
-import java.util.HashMap;
-import java.util.Map;
-
+import com.jayway.restassured.RestAssured;
+import com.jayway.restassured.authentication.FormAuthConfig;
+import com.jayway.restassured.response.Response;
+import com.jayway.restassured.specification.RequestSpecification;
+import com.ustn.userprofile.UserAccount;
+import com.ustn.userprofile.manager.UserManager;
 import org.baeldung.Application;
-import org.baeldung.persistence.dao.UserRepository;
-import org.baeldung.persistence.model.User;
 import org.baeldung.spring.TestDbConfig;
 import org.baeldung.spring.TestIntegrationConfig;
 import org.hamcrest.core.IsNot;
@@ -25,17 +20,20 @@ import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.jayway.restassured.RestAssured;
-import com.jayway.restassured.authentication.FormAuthConfig;
-import com.jayway.restassured.response.Response;
-import com.jayway.restassured.specification.RequestSpecification;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.isEmptyOrNullString;
+import static org.junit.Assert.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = { Application.class, TestDbConfig.class, TestIntegrationConfig.class }, webEnvironment = WebEnvironment.RANDOM_PORT)
 public class ChangePasswordIntegrationTest {
 
     @Autowired
-    private UserRepository userRepository;
+    private UserManager userRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -50,18 +48,18 @@ public class ChangePasswordIntegrationTest {
 
     @Before
     public void init() {
-        User user = userRepository.findByEmail("test@test.com");
+        UserAccount user = userRepository.findByEmail("test@test.com");
         if (user == null) {
-            user = new User();
-            user.setFirstName("Test");
-            user.setLastName("Test");
+            user = new UserAccount();
+            user.setName("Test");
+            user.setLogin("Test");
             user.setPassword(passwordEncoder.encode("test"));
             user.setEmail("test@test.com");
-            user.setEnabled(true);
-            userRepository.save(user);
+            user.setActive(true);
+            userRepository.insertUserAccount(user, new ArrayList<>());
         } else {
             user.setPassword(passwordEncoder.encode("test"));
-            userRepository.save(user);
+            userRepository.updateUserAccount(user, new ArrayList<>());
         }
 
         RestAssured.port = port;

@@ -1,4 +1,3 @@
-/*
 package org.baeldung.service;
 
 import com.ustn.userprofile.Permission;
@@ -57,4 +56,4 @@ public class UstnUserDetailsService implements UserDetailsService {
 //		logger.info("authorities : " + authorities);
 		return authorities;
 	}
-}*/
+}

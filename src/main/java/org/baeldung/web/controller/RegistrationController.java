@@ -1,19 +1,12 @@
 package org.baeldung.web.controller;
 
-import java.io.UnsupportedEncodingException;
-import java.util.Locale;
-import java.util.UUID;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-
-import org.baeldung.persistence.model.User;
+import com.ustn.userprofile.UserAccount;
+import com.ustn.userprofile.dto.UserMvcDto;
 import org.baeldung.persistence.model.VerificationToken;
 import org.baeldung.registration.OnRegistrationCompleteEvent;
 import org.baeldung.service.ISecurityUserService;
 import org.baeldung.service.IUserService;
 import org.baeldung.web.dto.PasswordDto;
-import org.baeldung.web.dto.UserDto;
 import org.baeldung.web.error.InvalidOldPasswordException;
 import org.baeldung.web.util.GenericResponse;
 import org.slf4j.Logger;
@@ -31,6 +24,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+import java.io.UnsupportedEncodingException;
+import java.util.Locale;
+import java.util.UUID;
 
 @Controller
 public class RegistrationController {
@@ -62,10 +61,10 @@ public class RegistrationController {
 
     @RequestMapping(value = "/user/registration", method = RequestMethod.POST)
     @ResponseBody
-    public GenericResponse registerUserAccount(@Valid final UserDto accountDto, final HttpServletRequest request) {
+    public GenericResponse registerUserAccount(@Valid final UserMvcDto accountDto, final HttpServletRequest request) {
         LOGGER.debug("Registering user account with information: {}", accountDto);
 
-        final User registered = userService.registerNewUserAccount(accountDto);
+        final UserAccount registered = userService.registerNewUserAccount(accountDto);
         eventPublisher.publishEvent(new OnRegistrationCompleteEvent(registered, request.getLocale(), getAppUrl(request)));
         return new GenericResponse("success");
     }
@@ -74,12 +73,8 @@ public class RegistrationController {
     public String confirmRegistration(final Locale locale, final Model model, @RequestParam("token") final String token) throws UnsupportedEncodingException {
         final String result = userService.validateVerificationToken(token);
         if (result.equals("valid")) {
-            final User user = userService.getUser(token);
+            final UserAccount user = userService.getUser(token);
             System.out.println(user);
-            if (user.isUsing2FA()) {
-                model.addAttribute("qr", userService.generateQRUrl(user));
-                return "redirect:/qrcode.html?lang=" + locale.getLanguage();
-            }
             model.addAttribute("message", messages.getMessage("message.accountVerified", null, locale));
             return "redirect:/login?lang=" + locale.getLanguage();
         }
@@ -96,7 +91,7 @@ public class RegistrationController {
     @ResponseBody
     public GenericResponse resendRegistrationToken(final HttpServletRequest request, @RequestParam("token") final String existingToken) {
         final VerificationToken newToken = userService.generateNewVerificationToken(existingToken);
-        final User user = userService.getUser(newToken.getToken());
+        final UserAccount user = userService.getUser(newToken.getToken());
         mailSender.send(constructResendVerificationTokenEmail(getAppUrl(request), request.getLocale(), newToken, user));
         return new GenericResponse(messages.getMessage("message.resendToken", null, request.getLocale()));
     }
@@ -105,7 +100,7 @@ public class RegistrationController {
     @RequestMapping(value = "/user/resetPassword", method = RequestMethod.POST)
     @ResponseBody
     public GenericResponse resetPassword(final HttpServletRequest request, @RequestParam("email") final String userEmail) {
-        final User user = userService.findUserByEmail(userEmail);
+        final UserAccount user = userService.findUserByEmail(userEmail);
         if (user != null) {
             final String token = UUID.randomUUID()
                 .toString();
@@ -128,7 +123,7 @@ public class RegistrationController {
     @RequestMapping(value = "/user/savePassword", method = RequestMethod.POST)
     @ResponseBody
     public GenericResponse savePassword(final Locale locale, @Valid PasswordDto passwordDto) {
-        final User user = (User) SecurityContextHolder.getContext()
+        final UserAccount user = (UserAccount) SecurityContextHolder.getContext()
             .getAuthentication()
             .getPrincipal();
         userService.changeUserPassword(user, passwordDto.getNewPassword());
@@ -139,7 +134,7 @@ public class RegistrationController {
     @RequestMapping(value = "/user/updatePassword", method = RequestMethod.POST)
     @ResponseBody
     public GenericResponse changeUserPassword(final Locale locale, @Valid PasswordDto passwordDto) {
-        final User user = userService.findUserByEmail(((User) SecurityContextHolder.getContext()
+        final UserAccount user = userService.findUserByEmail(((UserAccount) SecurityContextHolder.getContext()
             .getAuthentication()
             .getPrincipal()).getEmail());
         if (!userService.checkIfValidOldPassword(user, passwordDto.getOldPassword())) {
@@ -149,31 +144,21 @@ public class RegistrationController {
         return new GenericResponse(messages.getMessage("message.updatePasswordSuc", null, locale));
     }
 
-    @RequestMapping(value = "/user/update/2fa", method = RequestMethod.POST)
-    @ResponseBody
-    public GenericResponse modifyUser2FA(@RequestParam("use2FA") final boolean use2FA) throws UnsupportedEncodingException {
-        final User user = userService.updateUser2FA(use2FA);
-        if (use2FA) {
-            return new GenericResponse(userService.generateQRUrl(user));
-        }
-        return null;
-    }
-
     // ============== NON-API ============
 
-    private SimpleMailMessage constructResendVerificationTokenEmail(final String contextPath, final Locale locale, final VerificationToken newToken, final User user) {
+    private SimpleMailMessage constructResendVerificationTokenEmail(final String contextPath, final Locale locale, final VerificationToken newToken, final UserAccount user) {
         final String confirmationUrl = contextPath + "/registrationConfirm.html?token=" + newToken.getToken();
         final String message = messages.getMessage("message.resendToken", null, locale);
         return constructEmail("Resend Registration Token", message + " \r\n" + confirmationUrl, user);
     }
 
-    private SimpleMailMessage constructResetTokenEmail(final String contextPath, final Locale locale, final String token, final User user) {
+    private SimpleMailMessage constructResetTokenEmail(final String contextPath, final Locale locale, final String token, final UserAccount user) {
         final String url = contextPath + "/user/changePassword?id=" + user.getId() + "&token=" + token;
         final String message = messages.getMessage("message.resetPassword", null, locale);
         return constructEmail("Reset Password", message + " \r\n" + url, user);
     }
 
-    private SimpleMailMessage constructEmail(String subject, String body, User user) {
+    private SimpleMailMessage constructEmail(String subject, String body, UserAccount user) {
         final SimpleMailMessage email = new SimpleMailMessage();
         email.setSubject(subject);
         email.setText(body);

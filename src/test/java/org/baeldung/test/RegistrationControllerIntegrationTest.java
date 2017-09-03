@@ -1,7 +1,7 @@
 package org.baeldung.test;
 
+import com.ustn.userprofile.UserAccount;
 import org.baeldung.Application;
-import org.baeldung.persistence.model.User;
 import org.baeldung.persistence.model.VerificationToken;
 import org.baeldung.spring.TestDbConfig;
 import org.baeldung.spring.TestIntegrationConfig;
@@ -46,11 +46,11 @@ public class RegistrationControllerIntegrationTest {
     public void setUp() {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
 
-        User user = new User();
+        UserAccount user = new UserAccount();
         user.setEmail(UUID.randomUUID().toString() + "@example.com");
         user.setPassword(UUID.randomUUID().toString());
-        user.setFirstName("First");
-        user.setLastName("Last");
+        user.setName("First");
+        user.setLogin("Last");
 
         entityManager.persist(user);
         token = UUID.randomUUID().toString();

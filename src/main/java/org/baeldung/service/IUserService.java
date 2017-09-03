@@ -1,50 +1,42 @@
 package org.baeldung.service;
 
-import java.io.UnsupportedEncodingException;
-import java.util.List;
-
+import com.ustn.userprofile.UserAccount;
+import com.ustn.userprofile.dto.UserMvcDto;
 import org.baeldung.persistence.model.PasswordResetToken;
-import org.baeldung.persistence.model.User;
 import org.baeldung.persistence.model.VerificationToken;
-import org.baeldung.web.dto.UserDto;
 import org.baeldung.web.error.UserAlreadyExistException;
+
+import java.util.List;
 
 public interface IUserService {
 
-    User registerNewUserAccount(UserDto accountDto) throws UserAlreadyExistException;
+    UserAccount registerNewUserAccount(UserMvcDto accountDto) throws UserAlreadyExistException;
 
-    User getUser(String verificationToken);
+    UserAccount getUser(String verificationToken);
 
-    void saveRegisteredUser(User user);
+    void saveRegisteredUser(UserAccount user);
 
-    void deleteUser(User user);
-
-    void createVerificationTokenForUser(User user, String token);
+    void createVerificationTokenForUser(UserAccount user, String token);
 
     VerificationToken getVerificationToken(String VerificationToken);
 
     VerificationToken generateNewVerificationToken(String token);
 
-    void createPasswordResetTokenForUser(User user, String token);
+    void createPasswordResetTokenForUser(UserAccount user, String token);
 
-    User findUserByEmail(String email);
+    UserAccount findUserByEmail(String email);
 
     PasswordResetToken getPasswordResetToken(String token);
 
-    User getUserByPasswordResetToken(String token);
+    UserAccount getUserByPasswordResetToken(String token);
 
-    User getUserByID(long id);
+    UserAccount getUserByID(long id);
 
-    void changeUserPassword(User user, String password);
+    void changeUserPassword(UserAccount user, String password);
 
-    boolean checkIfValidOldPassword(User user, String password);
+    boolean checkIfValidOldPassword(UserAccount user, String password);
 
     String validateVerificationToken(String token);
 
-    String generateQRUrl(User user) throws UnsupportedEncodingException;
-
-    User updateUser2FA(boolean use2FA);
-
     List<String> getUsersFromSessionRegistry();
-
 }

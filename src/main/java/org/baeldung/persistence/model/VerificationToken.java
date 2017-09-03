@@ -1,24 +1,23 @@
 package org.baeldung.persistence.model;
 
+import com.ustn.userprofile.UserAccount;
+
 import java.util.Calendar;
 import java.util.Date;
 
-import javax.persistence.*;
-
-@Entity
 public class VerificationToken {
 
     private static final int EXPIRATION = 60 * 24;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     private Long id;
 
     private String token;
 
-    @OneToOne(targetEntity = User.class, fetch = FetchType.EAGER)
-    @JoinColumn(nullable = false, name = "user_id", foreignKey = @ForeignKey(name = "FK_VERIFY_USER"))
-    private User user;
+    private UserAccount user;
 
     private Date expiryDate;
 
@@ -33,7 +32,7 @@ public class VerificationToken {
         this.expiryDate = calculateExpiryDate(EXPIRATION);
     }
 
-    public VerificationToken(final String token, final User user) {
+    public VerificationToken(final String token, final UserAccount user) {
         super();
 
         this.token = token;
@@ -53,11 +52,11 @@ public class VerificationToken {
         this.token = token;
     }
 
-    public User getUser() {
+    public UserAccount getUser() {
         return user;
     }
 
-    public void setUser(final User user) {
+    public void setUser(final UserAccount user) {
         this.user = user;
     }
 

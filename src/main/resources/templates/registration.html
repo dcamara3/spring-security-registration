@@ -18,18 +18,20 @@ color:#000;
             <h1 th:text="#{label.form.title}">form</h1>
             <br/>
             <form action="/" method="POST" enctype="utf8">
+
                 <div class="form-group row" >
-                    <label class="col-sm-3" th:text="#{label.user.firstName}">first</label>
-                    <span class="col-sm-5"><input class="form-control" name="firstName" value="" required="required"/></span>
-                    <span id="firstNameError" class="alert alert-danger col-sm-4" style="display:none"></span>
-                    
-                </div>
-                <div class="form-group row">
-                    <label class="col-sm-3" th:text="#{label.user.lastName}">last</label>
-                    <span class="col-sm-5"><input class="form-control" name="lastName" value="" required="required"/></span>
+                    <label class="col-sm-3" th:text="#{label.user.login}">login</label>
+                    <span class="col-sm-5"><input class="form-control" name="login" value="" required="required"/></span>
                     <span id="lastNameError" class="alert alert-danger col-sm-4" style="display:none"></span>
-                    
+
                 </div>
+
+                <div class="form-group row" >
+                    <label class="col-sm-3" th:text="#{label.user.name}">name</label>
+                    <span class="col-sm-5"><input class="form-control" name="name" value="" required="required"/></span>
+                    <span id="firstNameError" class="alert alert-danger col-sm-4" style="display:none"></span>
+                </div>
+
                 <div class="form-group row">
                     <label class="col-sm-3" th:text="#{label.user.email}">email</label>
                     <span class="col-sm-5"><input type="email" class="form-control" name="email" value="" required="required"/></span>                    
